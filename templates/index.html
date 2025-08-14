@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KittenTTS - 智能文字转语音</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-cat"></i>
+                <h1>KittenTTS</h1>
+            </div>
+            <p class="subtitle">智能文字转语音系统</p>
+        </header>
+
+        <main class="main-content">
+            <div class="input-section">
+                <div class="form-group">
+                    <label for="text-input">
+                        <i class="fas fa-edit"></i>
+                        输入要转换的文字
+                    </label>
+                    <textarea 
+                        id="text-input" 
+                        placeholder="请输入您想要转换为语音的文字内容..."
+                        rows="4"
+                        maxlength="500"
+                    ></textarea>
+                    <div class="char-count">
+                        <span id="char-count">0</span>/500
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="voice-select">
+                        <i class="fas fa-microphone"></i>
+                        选择语音风格
+                    </label>
+                    <select id="voice-select">
+                        {% for voice in voices %}
+                        <option value="{{ voice }}" {% if voice == 'expr-voice-2-f' %}selected{% endif %}>
+                            {% if voice == 'expr-voice-2-m' %}语音2 (男声)
+                            {% elif voice == 'expr-voice-2-f' %}语音2 (女声)
+                            {% elif voice == 'expr-voice-3-m' %}语音3 (男声)
+                            {% elif voice == 'expr-voice-3-f' %}语音3 (女声)
+                            {% elif voice == 'expr-voice-4-m' %}语音4 (男声)
+                            {% elif voice == 'expr-voice-4-f' %}语音4 (女声)
+                            {% elif voice == 'expr-voice-5-m' %}语音5 (男声)
+                            {% elif voice == 'expr-voice-5-f' %}语音5 (女声)
+                            {% else %}{{ voice }}{% endif %}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <button id="generate-btn" class="generate-btn" {% if not model_loaded %}disabled{% endif %}>
+                    <i class="fas fa-magic"></i>
+                    生成语音
+                </button>
+
+                {% if not model_loaded %}
+                <div class="error-message">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    TTS模型未加载，请检查模型配置
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="output-section" id="output-section" style="display: none;">
+                <div class="audio-player">
+                    <h3>
+                        <i class="fas fa-headphones"></i>
+                        生成的语音
+                    </h3>
+                    <audio id="audio-player" controls>
+                        您的浏览器不支持音频播放
+                    </audio>
+                    <div class="audio-controls">
+                        <button id="download-btn" class="download-btn">
+                            <i class="fas fa-download"></i>
+                            下载音频文件
+                        </button>
+                        <button id="play-pause-btn" class="play-pause-btn">
+                            <i class="fas fa-play"></i>
+                            播放/暂停
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="loading-section" id="loading-section" style="display: none;">
+                <div class="spinner"></div>
+                <p>正在生成语音，请稍候...</p>
+            </div>
+
+            <div class="error-section" id="error-section" style="display: none;">
+                <div class="error-content">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span id="error-message"></span>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2024 KittenTTS. 基于 KittenML/kitten-tts-nano-0.1 模型</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
